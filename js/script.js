@@ -29,10 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return paginatedList;
   };
 
-  //paginets our list and assigns it to the variable
+  //paginates our list and assigns it to the variable
   const paginatedList = paginateList(studentListItems);
 
-  //creates list items for passed page number and replaces existin list with the one created
+  //creates list items for passed page number and replaces existing list with the one created
   const showPage = (pageNum) => {
     const studentList = document.getElementsByClassName('student-list');
           perPageList = [];
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   appendPageLinks(paginatedList);
 
   //listens for button click to change list accordingly
-  listContainer.addEventListener('click', (e) => {    //добавить DOMContentLoaded лисенер
+  listContainer.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
       showPage(e.target.textContent);
     }
