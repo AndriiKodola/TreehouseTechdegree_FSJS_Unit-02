@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const listContainer = document.getElementsByClassName('page')[0];
         studentListItems = document.getElementsByClassName('student-item');
+        navPanel = document.createElement('nav');
 
   //Paginates passed studet list by creating of an array (of pages) of arrays (of students per page)
   const paginateList = (list) => {
@@ -20,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < list.length; i++) {
       perPageList.push(list[i]);
 
-      if (i%10 === 9 || i === list.length - 1) { //controls that page wont have more than 10 students or our list ending
+      if (i%10 === 9 || i === list.length - 1) { //creates a new element array of pages when 10 students per page limit reached or our list ended
         paginatedList.push(perPageList);
         perPageList = [];
       }
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   //paginates our list and assigns it to the variable
-  const paginatedList = paginateList(studentListItems);
+  let paginatedList = paginateList(studentListItems);
 
   //creates list items for passed page number and replaces existing list with the one created
   const showPage = (pageNum) => {
@@ -54,8 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //creates nav bar according to design.css styles and appends it to the DOM
   const appendPageLinks = (paginatedList) => {
-    const navPanel = document.createElement('nav');
-          navPanelList = document.createElement('ol');
+    const navPanelList = document.createElement('ol');
     navPanel.appendChild(navPanelList);
     navPanelList.listStyleType = 'none';
     navPanelList.classList.add('pagination');
@@ -75,9 +75,62 @@ document.addEventListener('DOMContentLoaded', () => {
   appendPageLinks(paginatedList);
 
   //listens for button click to change list accordingly
-  listContainer.addEventListener('click', (e) => {
+  navPanel.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
       showPage(e.target.textContent);
     }
   });
+
+
+
+/***--------------Exceed expectations content----------------------***/
+
+//Creating and styling according to design.css search nodes
+const pageHeader = document.getElementsByClassName('page-header')[0];
+
+const searchDiv = document.createElement('div');
+      searchField = document.createElement('input');
+      searchButton = document.createElement('button');
+      searchDiv.classList.add('student-search');
+      searchField.type = 'search';
+      searchButton.type = 'button';
+      searchButton.textContent = 'Search';
+
+      searchDiv.appendChild(searchField);
+      searchDiv.appendChild(searchButton);
+      pageHeader.appendChild(searchDiv);
+
+
+      searchButton.addEventListener('click', () => {
+        const foundList = [];
+              searchName = searchField.value;
+              searchField.value = '';//empty the search field
+
+        //creating a list of matches
+        for (let i = 0; i < studentListItems.length; i++ ) {
+          const currentStudent = studentListItems[i];
+                studentName = currentStudent.getElementsByTagName('h3')[0].textContent;
+
+          if (studentName === searchName) {
+            foundList.push(currentStudent);
+          }
+        }
+
+        //Displays message if no matches found or match list if there were any
+        if (!foundList.length) {
+          const searchMessage = document.createElement('span');
+                searchMessage.textContent = 'No matches found.';
+
+                searchDiv.prepend(searchMessage);
+                setTimeout(searchDiv.removeChild(searchDiv.childNodes[0]), 3000);
+        } else {
+          //paginating matches list
+          paginatedList = paginateList(foundList);
+
+          //editing DOM structure to display search results
+          showPage(1);
+          navPanel.innerHTML = '';//deleting previous nav bar
+          appendPageLinks(paginatedList);
+        }
+      });
 });
